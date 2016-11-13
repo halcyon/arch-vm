@@ -43,6 +43,7 @@ Vagrant.configure("2") do |config|
   # config.vm.synced_folder "../data", "/vagrant_data"
   config.vm.synced_folder "../.ssh", "/vagrant_ssh"
   config.vm.synced_folder "../.gnupg", "/vagrant_gnupg"
+  config.vm.synced_folder "../Dropbox", "/vagrant_dropbox"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -78,6 +79,10 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", run: "always", inline: "ip route del default via 10.0.2.2"
   config.vm.provision "shell", inline: "pacman --noconfirm -S zsh"
   config.vm.provision "shell", inline: "/vagrant/provision.sh"
-  config.vm.synced_folder "../Dropbox", "/home/smcleod/Dropbox", owner: "smcleod", group: "smcleod"
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo umount vagrant_dropbox
+    sudo mount -t vboxsf -o uid=`id -u ${user}`,gid=`id -g ${user}`\
+         vagrant_dropbox /home/smcleod/Dropbox
+  SHELL
   config.vm.provision "shell", run: "always", inline: "alsactl restore"
 end

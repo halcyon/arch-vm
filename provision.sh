@@ -18,6 +18,7 @@ add_user() {
     hash1='$6$tnqtn6XWkBYE1QqS$YXUw9gxGlbp974ZGWn7c.lJwuCr40gL46'
     hash2='sdRrKDsBLq6pzMlBTFDBwH85oqW96nMhvXpjfHYjfLs49DDYFkvy0'
     useradd -m -G wheel,audio -s /usr/bin/zsh -p ${hash1}${hash2} ${user}
+    mkdir /home/smcleod/Dropbox
 }
 
 setup_ssh() {
