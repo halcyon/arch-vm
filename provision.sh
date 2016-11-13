@@ -3,7 +3,7 @@
 configure_locale() {
     localectl set-keymap --no-convert us
     rm /etc/localtime
-    ln -s /usr/share/zoneinfo/US/East /etc/localtime
+    ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
 }
 
 configure_sound() {

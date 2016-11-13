@@ -78,5 +78,6 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", run: "always", inline: "ip route del default via 10.0.2.2"
   config.vm.provision "shell", inline: "pacman --noconfirm -S zsh"
   config.vm.provision "shell", inline: "/vagrant/provision.sh"
+  config.vm.synced_folder "../Dropbox", "/home/smcleod/Dropbox", owner: "smcleod", group: "smcleod"
   config.vm.provision "shell", run: "always", inline: "alsactl restore"
 end
