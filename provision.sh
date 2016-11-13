@@ -57,6 +57,7 @@ sudo -iu smcleod zsh <<EOF
   git clone https://github.com/robbyrussell/oh-my-zsh.git .oh-my-zsh
   mkdir projects; cd projects
   git clone git@gitlab.com:halcyonblue/recipes.git
+  git clone git@github.com:halcyon/arch-vm.git
   git clone git@github.com:halcyon/org.git
   cd ..
 EOF
