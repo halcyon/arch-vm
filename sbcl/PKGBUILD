@@ -1,0 +1,77 @@
+# $Id$
+# Contributor: John Proctor <jproctor@prium.net>
+# Contributor: Daniel White <daniel@whitehouse.id.au>
+# Maintainer: Juergen Hoetzel <juergen@archlinux.org>
+# Contributor: Leslie Polzer (skypher)
+
+pkgname=sbcl
+pkgver=sbcl.1.3.11.r19.gd5b4aea
+pkgrel=1
+pkgdesc="Steel Bank Common Lisp"
+url="http://www.sbcl.org/"
+arch=('i686' 'x86_64')
+license=('custom')
+depends=('glibc' 'zlib')
+provides=('common-lisp' 'cl-asdf')
+makedepends=('sbcl')
+source=("git+https://github.com/sbcl/sbcl.git" "arch-fixes.lisp")
+
+_gitrepo=${pkgname%-git}
+
+pkgver() {
+  cd "${_gitrepo}"
+  ( set -o pipefail
+    git describe --tags --long | sed 's/^foo-//;s/\([^-]*-g\)/r\1/;s/-/./g' | sed 's/release.//g' | sed 's/.pre./pre/g' ||
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  )
+}
+
+build() {
+  cd "${_gitrepo}"
+
+  export CFLAGS+=" -D_GNU_SOURCE -fno-omit-frame-pointer -DSBCL_HOME=/usr/lib/sbcl"
+  export GNUMAKE="make"
+
+  # build system uses LINKFLAGS and OS_LIBS to build LDFLAGS
+  export LINKFLAGS="${LDFLAGS}"
+  unset LDFLAGS
+  unset MAKEFLAGS
+  
+  # Make a multi-threaded SBCL, disable LARGEFILE
+  cat >customize-target-features.lisp <<EOF
+(lambda (features)
+  (flet ((enable (x) (pushnew x features))
+         (disable (x) (setf features (remove x features))))
+  (enable :sb-thread)
+  (enable :sb-core-compression)
+  (disable :largefile)))
+EOF
+
+  sh make.sh sbcl --prefix=/usr
+  make -C doc/manual info
+}
+
+package() {
+  cd "${_gitrepo}"
+
+  # cannot have both SBCL_HOME and INSTALL_ROOT
+  SBCL_HOME="" INSTALL_ROOT="${pkgdir}/usr" sh install.sh
+
+  src/runtime/sbcl --core output/sbcl.core --script "${srcdir}/arch-fixes.lisp"
+  mv sbcl-new.core "${pkgdir}/usr/lib/sbcl/sbcl.core"
+
+  # sources
+  mkdir -p "${pkgdir}/usr/share/sbcl-source"
+  cp -R -t "${pkgdir}/usr/share/sbcl-source" "${srcdir}/${pkgname}/"{src,contrib}
+
+  # license
+  install -D -m644 "${srcdir}/${pkgname}/COPYING" \
+                   "${pkgdir}/usr/share/licenses/${pkgname}/license.txt"
+
+  # drop unwanted files
+  find "${pkgdir}" \( -name Makefile -o -name .cvsignore \) -delete
+  find "${pkgdir}/usr/share/sbcl-source" -type f \
+    \( -name \*.fasl -o -name \*.o -o -name \*.log -o -name \*.so -o -name a.out \) -delete
+
+  rm "${pkgdir}/usr/share/sbcl-source/src/runtime/sbcl"{,.nm}
+}
