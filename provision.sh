@@ -48,7 +48,7 @@ EOF
     sudo -iu smcleod yaourt --noconfirm -S powerpill aura-bin
 }
 
-install_dotfiles() {
+clone_repos() {
 sudo -iu smcleod zsh <<EOF
   git clone git@github.com:halcyon/dotfiles.git
   cd dotfiles; ./stow.sh; cd ..
@@ -104,7 +104,8 @@ install_packages() {
 
     typeset -U xorg
     xorg=("xf86-input-libinput" "xorg-server" "xorg-server-utils" "xorg-apps"
-          "xorg-xinit" "xclip" "rxvt-unicode" "noto-fonts" "firefox")
+          "xorg-xinit" "xclip" "rxvt-unicode" "ttf-ubuntu-font-family"
+          "noto-fonts" "firefox")
 
     typeset -U aur
     aur=("aur-git" "leiningen-standalone" "tmate" "totp-cli" "dropbox"
@@ -122,7 +123,7 @@ setup_ssh
 setup_gnupg
 install_aura
 install_packages
-install_dotfiles
+clone_repos
 make_sbcl
 install_stumpwm
 systemctl enable vboxservice.service
