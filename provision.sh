@@ -38,7 +38,7 @@ setup_kiwix() {
 }
 
 setup_gnupg() {
-    cp -R /vagrant_gnupg /home/${user}/.gnupg
+    mv ${PROVISIONED}/.gnupg /home/${user}
     chown -R ${user}:${user} /home/${user}/.gnupg
     echo "keyring /etc/pacman.d/gnupg/pubring.gpg" >> /home/${user}/.gnupg/gpg.conf
 }

@@ -41,7 +41,6 @@ Vagrant.configure("2") do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
-  config.vm.synced_folder "../.gnupg", "/vagrant_gnupg"
   config.vm.synced_folder "../Dropbox", "/vagrant_dropbox"
   config.vm.synced_folder "../kiwix-data", "/vagrant_kiwix"
 
@@ -86,6 +85,8 @@ Vagrant.configure("2") do |config|
                       destination: "provisioned/kiwix-serve.service"
   config.vm.provision "file", source: "~/.ssh/id_rsa",
                       destination: "provisioned/id_rsa"
+  config.vm.provision "file", source: "~/.gnupg",
+                      destination: "provisioned/.gnupg"
   config.vm.provision "shell", inline: "/vagrant/provision.sh"
   config.vm.provision "shell", run: "always", inline: <<-SHELL
     user=smcleod
