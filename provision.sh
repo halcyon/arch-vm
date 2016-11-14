@@ -113,7 +113,7 @@ install_packages() {
 
     typeset -U aur
     aur=("aur-git" "leiningen-standalone" "tmate" "totp-cli" "dropbox"
-         "dropbox-cli" "slack-desktop" "sococo")
+         "dropbox-cli" "slack-desktop" "sococo" "kiwix-bin")
 
     aura --noconfirm -R ${removals}
     aura --noconfirm --needed -S ${base} ${virtualbox_guest_additions} ${shell} ${utilities} ${xorg}
