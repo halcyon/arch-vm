@@ -138,6 +138,7 @@ configure_locale
 configure_sound
 add_user
 setup_ssh
+setup_dropbox
 setup_kiwix
 setup_gnupg
 install_aura
