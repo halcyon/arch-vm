@@ -41,9 +41,9 @@ Vagrant.configure("2") do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
-  config.vm.synced_folder "../.ssh", "/vagrant_ssh"
   config.vm.synced_folder "../.gnupg", "/vagrant_gnupg"
   config.vm.synced_folder "../Dropbox", "/vagrant_dropbox"
+  config.vm.synced_folder "../kiwix-data", "/vagrant_kiwix"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -78,12 +78,21 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", run: "always", inline: "ip route del default via 10.0.2.2"
   config.vm.provision "shell", inline: "pacman --noconfirm -S zsh"
+  config.vm.provision "shell", inline: <<-SHELL
+    mkdir -p provisioned
+    chown -R vagrant:vagrant provisioned
+  SHELL
+  config.vm.provision "file", source: "kiwix-serve.service",
+                      destination: "provisioned/kiwix-serve.service"
+  config.vm.provision "file", source: "~/.ssh/id_rsa",
+                      destination: "provisioned/id_rsa"
   config.vm.provision "shell", inline: "/vagrant/provision.sh"
   config.vm.provision "shell", run: "always", inline: <<-SHELL
     user=smcleod
-    sudo umount vagrant_dropbox
-    sudo mount -t vboxsf -o uid=`id -u ${user}`,gid=`id -g ${user}`\
-         vagrant_dropbox /home/${user}/Dropbox
+    umount vagrant_dropbox
+    mount -t vboxsf -o uid=`id -u ${user}`,gid=`id -g ${user}`\
+          vagrant_dropbox /home/${user}/Dropbox
+    systemctl restart kiwix-serve
+    alsactl restore
   SHELL
-  config.vm.provision "shell", run: "always", inline: "alsactl restore"
 end

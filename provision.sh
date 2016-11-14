@@ -1,5 +1,8 @@
 #!/usr/bin/env zsh
 
+PROVISIONED=/home/vagrant/provisioned
+user=smcleod
+
 configure_locale() {
     localectl set-keymap --no-convert us
     rm /etc/localtime
@@ -13,25 +16,25 @@ configure_sound() {
     cp /vagrant/asound.state /var/lib/alsa/
 }
 
-user=smcleod
 add_user() {
     hash1='$6$tnqtn6XWkBYE1QqS$YXUw9gxGlbp974ZGWn7c.lJwuCr40gL46'
     hash2='sdRrKDsBLq6pzMlBTFDBwH85oqW96nMhvXpjfHYjfLs49DDYFkvy0'
     useradd -m -G wheel,audio -s /usr/bin/zsh -p ${hash1}${hash2} ${user}
-    mkdir /home/smcleod/Dropbox
+    mkdir /home/${user}/Dropbox
 }
 
 setup_ssh() {
     mkdir -p /home/${user}/.ssh
-    cp /vagrant_ssh/id_rsa /home/${user}/.ssh/
+    mv ${PROVISIONED}/id_rsa /home/${user}/.ssh
+    chmod 0600 /home/${user}/.ssh/id_rsa
     echo 'StrictHostKeyChecking no' >> /home/${user}/.ssh/config
     chown -R ${user}:${user} /home/${user}/.ssh
-    chmod 0600 /home/${user}/.ssh/id_rsa
 }
 
-secure_system() {
-    passwd -l vagrant
-    rm /home/${user}/.ssh/config
+setup_kiwix() {
+    mv ${PROVISIONED}/kiwix-serve.service /etc/systemd/system/kiwix-serve.service
+    chown -R root:root /etc/systemd/system/kiwix-serve.service
+    systemctl enable kiwix-serve.service
 }
 
 setup_gnupg() {
@@ -120,15 +123,21 @@ install_packages() {
     aura --noconfirm --needed -A ${aur}
 }
 
+secure_system() {
+    passwd -l vagrant
+    rm /home/${user}/.ssh/config
+}
+
 configure_locale
 configure_sound
 add_user
 setup_ssh
+setup_kiwix
 setup_gnupg
 install_aura
 install_packages
+systemctl enable vboxservice.service
 clone_repos
 make_sbcl
 install_stumpwm
-systemctl enable vboxservice.service
 secure_system
