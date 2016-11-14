@@ -162,5 +162,6 @@ install_packages
 systemctl enable vboxservice.service
 clone_repos
 make_sbcl
+install_quicklisp
 install_stumpwm
 secure_system
