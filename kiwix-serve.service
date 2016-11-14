@@ -4,8 +4,8 @@ After=network.target
 
 [Service]
 Restart=always
-ExecStart=/usr/lib/kiwix/bin/kiwix-serve --library --port=8080 /vagrant_kiwix/library/wiktionary_en_all_2016-08.zim.xml
-User=nobody
+ExecStart=/usr/lib/kiwix/bin/kiwix-serve --library --port=8080 /home/smcleod/kiwix-data/library/wiktionary_en_all_2016-08.zim.xml
+User=smcleod
 
 [Install]
 WantedBy=multi-user.target

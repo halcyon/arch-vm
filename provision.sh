@@ -20,7 +20,6 @@ add_user() {
     hash1='$6$tnqtn6XWkBYE1QqS$YXUw9gxGlbp974ZGWn7c.lJwuCr40gL46'
     hash2='sdRrKDsBLq6pzMlBTFDBwH85oqW96nMhvXpjfHYjfLs49DDYFkvy0'
     useradd -m -G wheel,audio -s /usr/bin/zsh -p ${hash1}${hash2} ${user}
-    mkdir /home/${user}/Dropbox
 }
 
 setup_ssh() {
@@ -31,9 +30,16 @@ setup_ssh() {
     chown -R ${user}:${user} /home/${user}/.ssh
 }
 
+setup_dropbox() {
+    mv ${PROVISIONED}/Dropbox /home/${user}
+    chown -R smcleod:smcleod /home/${user}/Dropbox
+}
+
 setup_kiwix() {
     mv ${PROVISIONED}/kiwix-serve.service /etc/systemd/system/kiwix-serve.service
     chown -R root:root /etc/systemd/system/kiwix-serve.service
+    mv ${PROVISIONED}/kiwix-data /home/${user}
+    chown -R ${user}:${user} /home/${user}/kiwix-data
     systemctl enable kiwix-serve.service
 }
 
