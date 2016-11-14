@@ -79,10 +79,11 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", run: "always", inline: "ip route del default via 10.0.2.2"
   config.vm.provision "shell", inline: "pacman --noconfirm -S zsh"
   config.vm.provision "shell", inline: "/vagrant/provision.sh"
-  config.vm.provision "shell", inline: <<-SHELL
+  config.vm.provision "shell", run: "always", inline: <<-SHELL
+    user=smcleod
     sudo umount vagrant_dropbox
     sudo mount -t vboxsf -o uid=`id -u ${user}`,gid=`id -g ${user}`\
-         vagrant_dropbox /home/smcleod/Dropbox
+         vagrant_dropbox /home/${user}/Dropbox
   SHELL
   config.vm.provision "shell", run: "always", inline: "alsactl restore"
 end

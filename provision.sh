@@ -104,7 +104,7 @@ install_packages() {
 
     typeset -U utilities
     utilities=("pass" "the_silver_searcher" "the_silver_searcher"
-               "emacs-nox" "git" "jdk8-openjdk")
+               "unzip" "emacs-nox" "git" "jdk8-openjdk")
 
     typeset -U xorg
     xorg=("xf86-input-libinput" "xorg-server" "xorg-server-utils" "xorg-apps"
