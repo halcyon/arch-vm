@@ -10,10 +10,12 @@ configure_locale() {
 }
 
 configure_sound() {
-    cp /vagrant/snd-hda-intel.conf /etc/modprobe.d/
+    mv ${PROVISIONED}/snd-hda-intel.conf /etc/modprobe.d/
+    chown root:root /etc/modprobe.d/snd-hda-intel.conf
     rmmod snd-hda-intel && modprobe snd-hda-intel
     pacman --noconfirm -S alsa-utils
-    cp /vagrant/asound.state /var/lib/alsa/
+    mv ${PROVISIONED}/asound.state /var/lib/alsa/
+    chown root:root /var/lib/alsa/asound.state
 }
 
 add_user() {
@@ -32,7 +34,7 @@ setup_ssh() {
 
 setup_dropbox() {
     mv ${PROVISIONED}/Dropbox /home/${user}
-    chown -R smcleod:smcleod /home/${user}/Dropbox
+    chown -R ${user}:${user} /home/${user}/Dropbox
 }
 
 setup_kiwix() {
@@ -61,7 +63,7 @@ EOF
 }
 
 clone_repos() {
-sudo -iu smcleod zsh <<EOF
+sudo -iu ${user} zsh <<EOF
   git clone git@github.com:halcyon/dotfiles.git
   cd dotfiles; ./stow.sh; cd ..
   git clone git@bitbucket.org:halcyonblue/dotfiles-private.git
@@ -76,17 +78,28 @@ EOF
 }
 
 make_sbcl() {
-    cp -r /vagrant/sbcl /home/${user}
-    chown -R ${user}:${user} /home/${user}/sbcl
-    cd /home/${user}/sbcl
-    sudo -u smcleod makepkg --skipinteg
-    aura --noconfirm --needed -U *.xz
+  mv ${PROVISIONED}/sbcl /home/${user}
+  chown -R ${user}:${user} /home/${user}/sbcl
+sudo -iu ${user} zsh <<EOF
+  cd sbcl
+  makepkg --skipinteg
+EOF
+  aura --noconfirm --needed -U /home/${user}/sbcl/*.xz
+  rm -rf /home/${user}/sbcl
+}
+
+install_quicklisp() {
+  mv ${PROVISIONED}/install-quicklisp.lisp /home/${user}
+  chown ${user}:${user} /home/${user}/install-quicklisp.lisp
+sudo -iu ${user} zsh <<EOF
+  curl -O https://beta.quicklisp.org/quicklisp.lisp
+  sbcl --load /vagrant/install-quicklisp.lisp
+EOF
+  rm quicklisp.lisp
 }
 
 install_stumpwm() {
-sudo -iu smcleod zsh <<EOF
-  curl -O https://beta.quicklisp.org/quicklisp.lisp
-  sbcl --load /vagrant/install-quicklisp.lisp
+sudo -iu ${user} zsh <<EOF
   git clone https://github.com/stumpwm/stumpwm.git
   cd stumpwm
   autoconf
@@ -95,6 +108,8 @@ sudo -iu smcleod zsh <<EOF
 EOF
   cd /home/${user}/stumpwm
   make install
+  cd
+  rm -rf /home/${user}/stumpwm
 }
 
 install_packages() {

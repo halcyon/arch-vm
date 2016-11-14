@@ -74,22 +74,24 @@ Vagrant.configure("2") do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", run: "always", inline: "ip route del default via 10.0.2.2"
+
   config.vm.provision "shell", inline: "pacman --noconfirm -S zsh"
   config.vm.provision "shell", inline: <<-SHELL
     mkdir -p provisioned
     chown -R vagrant:vagrant provisioned
   SHELL
-  config.vm.provision "file", source: "kiwix-serve.service",
-                      destination: "provisioned/kiwix-serve.service"
-  config.vm.provision "file", source: "~/.ssh/id_rsa",
-                      destination: "provisioned/id_rsa"
-  config.vm.provision "file", source: "~/.gnupg",
-                      destination: "provisioned/.gnupg"
-  config.vm.provision "file", source: "~/Dropbox",
-                      destination: "provisioned/Dropbox"
-  config.vm.provision "file", source: "~/kiwix-data",
-                      destination: "provisioned/kiwix-data"
-  config.vm.provision "shell", inline: "/vagrant/provision.sh"
+  config.vm.provision "file", source: "asound.state", destination: "provisioned/asound.state"
+  config.vm.provision "file", source: "kiwix-serve.service", destination: "provisioned/kiwix-serve.service"
+  config.vm.provision "file", source: "snd-hda-intel.conf", destination: "provisioned/snd-hda-intel.conf"
+  config.vm.provision "file", source: "sbcl", destination: "provisioned/sbcl"
+  config.vm.provision "file", source: "install-quicklisp.lisp", destination: "provisioned/install-quicklisp.lisp"
+  config.vm.provision "file", source: "~/.ssh/id_rsa", destination: "provisioned/id_rsa"
+  config.vm.provision "file", source: "~/.gnupg", destination: "provisioned/.gnupg"
+  config.vm.provision "file", source: "~/Dropbox", destination: "provisioned/Dropbox"
+  config.vm.provision "file", source: "~/kiwix-data", destination: "provisioned/kiwix-data"
+  config.vm.provision "file", source: "provision.sh", destination: "provisioned/provision.sh"
+  config.vm.provision "shell", inline: "/home/vagrant/provisioned/provision.sh"
+
   config.vm.provision "shell", run: "always", inline: <<-SHELL
     systemctl restart kiwix-serve
     alsactl restore
