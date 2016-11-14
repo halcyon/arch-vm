@@ -33,14 +33,14 @@ setup_ssh() {
 }
 
 setup_dropbox() {
-    mv ${PROVISIONED}/Dropbox /home/${user}
+    cp -R /vagrant_dropbox /home/${user}/Dropbox
     chown -R ${user}:${user} /home/${user}/Dropbox
 }
 
 setup_kiwix() {
     mv ${PROVISIONED}/kiwix-serve.service /etc/systemd/system/kiwix-serve.service
     chown -R root:root /etc/systemd/system/kiwix-serve.service
-    mv ${PROVISIONED}/kiwix-data /home/${user}
+    cp -R /vagrant_kiwix /home/${user}/kiwix-data
     chown -R ${user}:${user} /home/${user}/kiwix-data
     systemctl enable kiwix-serve.service
 }
@@ -93,9 +93,10 @@ install_quicklisp() {
   chown ${user}:${user} /home/${user}/install-quicklisp.lisp
 sudo -iu ${user} zsh <<EOF
   curl -O https://beta.quicklisp.org/quicklisp.lisp
-  sbcl --load /vagrant/install-quicklisp.lisp
+  sbcl --load /home/${user}/install-quicklisp.lisp
 EOF
-  rm quicklisp.lisp
+  rm /home/${user}/install-quicklisp.lisp
+  rm /home/${user}/quicklisp.lisp
 }
 
 install_stumpwm() {

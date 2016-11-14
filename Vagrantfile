@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
+  config.vm.network "private_network", ip: "192.168.33.10"
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -41,6 +41,8 @@ Vagrant.configure("2") do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
+  config.vm.synced_folder "~/Dropbox", "/vagrant_dropbox", nfs: true
+  config.vm.synced_folder "~/kiwix-data", "/vagrant_kiwix", nfs: true
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -87,8 +89,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "file", source: "install-quicklisp.lisp", destination: "provisioned/install-quicklisp.lisp"
   config.vm.provision "file", source: "~/.ssh/id_rsa", destination: "provisioned/id_rsa"
   config.vm.provision "file", source: "~/.gnupg", destination: "provisioned/.gnupg"
-  config.vm.provision "file", source: "~/Dropbox", destination: "provisioned/Dropbox"
-  config.vm.provision "file", source: "~/kiwix-data", destination: "provisioned/kiwix-data"
+
   config.vm.provision "file", source: "provision.sh", destination: "provisioned/provision.sh"
   config.vm.provision "shell", inline: "/home/vagrant/provisioned/provision.sh"
 
