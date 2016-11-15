@@ -133,12 +133,12 @@ install_packages() {
 
     typeset -U xorg
     xorg=("xf86-input-libinput" "xorg-server" "xorg-server-utils" "xorg-apps"
-          "xorg-xinit" "xclip" "rxvt-unicode" "ttf-ubuntu-font-family"
-          "ttf-symbola" "noto-fonts" "firefox" "calibre")
+          "xorg-xinit" "xclip" "konsole" "ttf-ubuntu-font-family" "noto-fonts"
+          "firefox" "calibre")
 
     typeset -U aur
     aur=("aur-git" "leiningen-standalone" "tmate" "totp-cli" "dropbox"
-         "dropbox-cli" "slack-desktop" "sococo" "kiwix-bin")
+         "dropbox-cli" "slack-desktop" "sococo" "kiwix-bin" "ttf-fira-code")
 
     aura --noconfirm -R ${removals}
     aura --noconfirm --needed -S ${base} ${virtualbox_guest_additions} ${shell} ${utilities} ${xorg}
