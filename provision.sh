@@ -117,9 +117,6 @@ install_packages() {
     typeset -U removals
     removals=("virtualbox-guest-utils-nox")
 
-    typeset -U base
-    base=("base-devel" "sbcl")
-
     typeset -U virtualbox_guest_additions
     virtualbox_guest_additions=("virtualbox-guest-utils"
                                 "virtualbox-guest-modules-arch")
@@ -129,19 +126,22 @@ install_packages() {
 
     typeset -U utilities
     utilities=("pass" "the_silver_searcher" "the_silver_searcher"
-               "unzip" "emacs-nox" "git" "jdk8-openjdk")
+               "unzip" "emacs-nox" "git" "jdk8-openjdk" "sbcl")
 
     typeset -U xorg
     xorg=("xf86-input-libinput" "xorg-server" "xorg-server-utils" "xorg-apps"
-          "xorg-xinit" "xclip" "konsole" "ttf-ubuntu-font-family" "noto-fonts"
-          "firefox" "calibre")
+          "xorg-xinit" "xclip" "konsole" "ttf-symbola" "ttf-ubuntu-font-family"
+          "noto-fonts" "firefox" "calibre")
 
     typeset -U aur
     aur=("aur-git" "leiningen-standalone" "tmate" "totp-cli" "dropbox"
          "dropbox-cli" "slack-desktop" "sococo" "kiwix-bin" "ttf-fira-code")
 
     aura --noconfirm -R ${removals}
-    aura --noconfirm --needed -S ${base} ${virtualbox_guest_additions} ${shell} ${utilities} ${xorg}
+    aura --noconfirm --needed -S ${virtualbox_guest_additions}
+    aura --noconfirm --needed -S ${shell}
+    aura --noconfirm --needed -S ${utilities}
+    aura --noconfirm --needed -S ${xorg}
     aura --noconfirm --needed -A ${aur}
 }
 
@@ -161,7 +161,7 @@ install_aura
 install_packages
 systemctl enable vboxservice.service
 clone_repos
-make_sbcl
+# make_sbcl
 install_quicklisp
 install_stumpwm
 secure_system
