@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "ogarcia/archlinux-x64"
+  config.vm.box = "arch-vm"
 
   config.vm.network "public_network", bridge: "bridge0"
 
@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  config.vm.network "private_network", ip: "192.168.33.10"
+  # config.vm.network "private_network", ip: "192.168.33.10"
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -41,8 +41,8 @@ Vagrant.configure("2") do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
-  config.vm.synced_folder "~/Dropbox", "/vagrant_dropbox", nfs: true
-  config.vm.synced_folder "~/kiwix-data", "/vagrant_kiwix", nfs: true
+  # config.vm.synced_folder "~/Dropbox", "/vagrant_dropbox", nfs: true
+  # config.vm.synced_folder "~/kiwix-data", "/vagrant_kiwix", nfs: true
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -53,7 +53,7 @@ Vagrant.configure("2") do |config|
     vb.gui = true
 
     # Customize the amount of memory on the VM:
-    vb.memory = "8092"
+    vb.memory = "2048"
     vb.customize ["modifyvm", :id, "--vram", "128"]
     vb.customize ["modifyvm", :id, "--monitorcount", "2"]
     vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
@@ -77,21 +77,21 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", run: "always", inline: "ip route del default via 10.0.2.2"
 
-  config.vm.provision "shell", inline: "pacman --noconfirm -S zsh"
-  config.vm.provision "shell", inline: <<-SHELL
-    mkdir -p provisioned
-    chown -R vagrant:vagrant provisioned
-  SHELL
-  config.vm.provision "file", source: "asound.state", destination: "provisioned/asound.state"
-  config.vm.provision "file", source: "kiwix-serve.service", destination: "provisioned/kiwix-serve.service"
-  config.vm.provision "file", source: "snd-hda-intel.conf", destination: "provisioned/snd-hda-intel.conf"
-  config.vm.provision "file", source: "sbcl", destination: "provisioned/sbcl"
-  config.vm.provision "file", source: "install-quicklisp.lisp", destination: "provisioned/install-quicklisp.lisp"
-  config.vm.provision "file", source: "~/.ssh/id_rsa", destination: "provisioned/id_rsa"
-  config.vm.provision "file", source: "~/.gnupg", destination: "provisioned/.gnupg"
+  # config.vm.provision "shell", inline: "pacman --noconfirm -S zsh"
+  # config.vm.provision "shell", inline: <<-SHELL
+  #   mkdir -p provisioned
+  #   chown -R vagrant:vagrant provisioned
+  # SHELL
+  # config.vm.provision "file", source: "asound.state", destination: "provisioned/asound.state"
+  # config.vm.provision "file", source: "kiwix-serve.service", destination: "provisioned/kiwix-serve.service"
+  # config.vm.provision "file", source: "snd-hda-intel.conf", destination: "provisioned/snd-hda-intel.conf"
+  # config.vm.provision "file", source: "sbcl", destination: "provisioned/sbcl"
+  # config.vm.provision "file", source: "install-quicklisp.lisp", destination: "provisioned/install-quicklisp.lisp"
+  # config.vm.provision "file", source: "~/.ssh/id_rsa", destination: "provisioned/id_rsa"
+  # config.vm.provision "file", source: "~/.gnupg", destination: "provisioned/.gnupg"
 
-  config.vm.provision "file", source: "provision.sh", destination: "provisioned/provision.sh"
-  config.vm.provision "shell", inline: "/home/vagrant/provisioned/provision.sh"
+  # config.vm.provision "file", source: "provision.sh", destination: "provisioned/provision.sh"
+  # config.vm.provision "shell", inline: "/home/vagrant/provisioned/provision.sh"
 
   config.vm.provision "shell", run: "always", inline: <<-SHELL
     systemctl restart kiwix-serve
