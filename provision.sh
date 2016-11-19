@@ -125,8 +125,8 @@ install_packages() {
     shell=("autojump" "tmux" "stow")
 
     typeset -U utilities
-    utilities=("pass" "the_silver_searcher" "the_silver_searcher"
-               "unzip" "emacs-nox" "git" "jdk8-openjdk" "sbcl")
+    utilities=("pass" "the_silver_searcher" "openconnect" "unzip" "emacs-nox"
+               "git" "jdk8-openjdk" "rclone" "sbcl")
 
     typeset -U xorg
     xorg=("xf86-input-libinput" "xorg-server" "xorg-server-utils" "xorg-apps"
